@@ -7,14 +7,16 @@
 
 import SwiftUI
 
-struct DynamicList: View {
+struct DynamicList<Cell: View>: View {
+    let children: [Cell]
+    
     var body: some View {
-        DynamicListView()
+        DynamicListView(cells: children)
     }
 }
 
 struct DynamicList_Previews: PreviewProvider {
     static var previews: some View {
-        DynamicList()
+        DynamicList (children: [CircleImage(image: Image("turtlerock"))])
     }
 }

@@ -10,6 +10,7 @@ import SwiftUI
 struct LandmarkList: View {
     @EnvironmentObject var modelData: ModelData
     @State private var showFavoritesOnly = false
+    @State private var bounceUI = true
     
     var filteredLandmarks: [Landmark] {
         modelData.landmarks.filter { landmark in
@@ -19,19 +20,47 @@ struct LandmarkList: View {
     
     var body: some View {
         NavigationView {
-            List(){
-                Toggle(isOn: $showFavoritesOnly) {
-                    Text("Favorites only")
-                }
-                
-                ForEach(filteredLandmarks) { landmark in
-                    NavigationLink(destination: LandmarkDetail(landmark: landmark)) {
-                        LandmarkRow(landmark: landmark)
+            
+            if (bounceUI) {
+                DynamicList(children : getListData())
+            }
+            else
+            {
+                List() {
+                    Toggle(isOn: $showFavoritesOnly) {
+                        Text("Favorites only")
+                    }
+                            
+                    Toggle(isOn: $bounceUI) {
+                        Text("Bounce ui")
+                    }
+                    
+                    ForEach(filteredLandmarks) { landmark in
+                        NavigationLink(destination: LandmarkDetail(landmark: landmark)) {
+                            LandmarkRow(landmark: landmark)
+                        }
                     }
                 }
             }
-            .navigationTitle("Landmarks")
         }
+        .navigationTitle("Landmarks")
+    }
+    
+    func getListData<T>() -> [T] {
+        var views: [T] = []
+        
+        views.append(Toggle(isOn: $showFavoritesOnly) {
+            Text("Favorites only")
+        } as! T)
+        
+        views.append(Toggle(isOn: $bounceUI) {
+            Text("Bounce ui")
+        } as! T)
+        
+        for landmark in filteredLandmarks {
+            views.append(LandmarkRow(landmark: landmark) as! T)
+        }
+        return views
     }
 }
 

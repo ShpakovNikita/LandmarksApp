@@ -8,7 +8,9 @@
 import SwiftUI
 import UIKit
 
-struct DynamicListView: UIViewRepresentable {
+struct DynamicListView<Cell: View>: UIViewRepresentable {
+    var cells: [Cell]
+    
     func updateUIView(_ uiView: UICollectionView, context: Context) {
         
     }
@@ -33,9 +35,6 @@ struct DynamicListView: UIViewRepresentable {
     }
     
     class Coordinator: NSObject, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
-        // TODO: remove
-        private let fakeDataSource = (0...10000).map { $0 }
-        
         var parent: DynamicListView
 
         init(_ dynamicListView: DynamicListView) {
@@ -44,6 +43,7 @@ struct DynamicListView: UIViewRepresentable {
         
         // UICollectionViewDelegateFlowLayout
         func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+            var _ = self.parent.cells[indexPath.item]
             return .init(width: collectionView.bounds.size.width, height: 50)
         }
 
@@ -58,12 +58,22 @@ struct DynamicListView: UIViewRepresentable {
         
         //UICollectionViewDataSource
         func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            return fakeDataSource.count
+            return parent.cells.count
         }
 
         func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
-            cell.backgroundColor = .black
+            
+            let parent = UIViewController()
+            parent.view = cell
+            
+            let child = UIHostingController(rootView: self.parent.cells[indexPath.item])
+            
+            child.view.translatesAutoresizingMaskIntoConstraints = false
+            child.view.frame = parent.view.bounds
+            // First, add the view of the child to the view of the parent
+            cell.addSubview(child.view)
+            
             return cell
         }
     

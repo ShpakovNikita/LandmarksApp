@@ -16,7 +16,6 @@ struct ContentView: View {
     }
     
     var body: some View {
-        /*
         TabView(selection: $selection) {
             CategoryHome()
                 .tabItem {
@@ -30,8 +29,6 @@ struct ContentView: View {
                 }
                 .tag(Tab.list)
         }
- */
-        DynamicList()
     }
 }
 
