@@ -21,11 +21,13 @@ struct LandmarkList: View {
     var body: some View {
         NavigationView {
             
+            /*
             if (bounceUI) {
                 DynamicList(children : getListData())
             }
             else
             {
+                */
                 List() {
                     Toggle(isOn: $showFavoritesOnly) {
                         Text("Favorites only")
@@ -41,9 +43,9 @@ struct LandmarkList: View {
                         }
                     }
                 }
-            }
+                .navigationTitle("Landmarks")
         }
-        .navigationTitle("Landmarks")
+        
     }
     
     func getListData<T>() -> [T] {
